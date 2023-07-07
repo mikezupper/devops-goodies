@@ -1,0 +1,33 @@
+version: "2.2"
+services:
+  erigon:
+    image: thorax/erigon:latest
+    command:
+      [
+        "--metrics",
+        "--metrics.addr=0.0.0.0",
+        "--metrics.port=6060",
+        "--pprof",
+        "--pprof.addr=0.0.0.0",
+        "--pprof.port=6061",
+        "--authrpc.jwtsecret=/home/erigon/.local/share/erigon/jwt.hex",
+        "--datadir=/home/erigon/.local/share/erigon",
+        "--http",
+        "--http.addr=0.0.0.0",
+        "--ws",
+        "--http.api=eth,debug,net,trace,web3,erigon",
+        "--prune",
+        "htc",
+      ]
+    environment:
+      - XDG_DATA_HOME=/home/erigon/.local/share/erigon
+    ports:
+      - 8545:8545
+    volumes:
+      # It's ok to mount sub-dirs of "datadir" to different drives
+      - erigon_data:/home/erigon/.local/share/erigon
+    restart: unless-stopped
+    mem_swappiness: 0
+volumes:
+  erigon_data:
+    external: true
